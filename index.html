@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hebrew Fixer - Fix Hebrew Keyboard Typos Instantly</title>
+  <meta name="description" content="Accidentally typed in Hebrew when you meant English or German? Fix it instantly with one keyboard shortcut. Free, local, open source." />
+  <style>
+    :root {
+      --blue: #2563eb;
+      --blue-light: #eff6ff;
+      --dark: #0f172a;
+      --gray: #64748b;
+      --light: #f8fafc;
+      --border: #e2e8f0;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fff; color: var(--dark); line-height: 1.6; }
+
+    /* NAV */
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); z-index: 100; }
+    .logo { font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem; }
+    .logo span { font-size: 1.4rem; }
+    .lang-toggle { display: flex; gap: 0.5rem; }
+    .lang-btn { padding: 0.3rem 0.8rem; border-radius: 20px; border: 1px solid var(--border); background: white; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; }
+    .lang-btn.active { background: var(--blue); color: white; border-color: var(--blue); }
+
+    /* HERO */
+    .hero { text-align: center; padding: 5rem 2rem 3rem; max-width: 800px; margin: 0 auto; }
+    .hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; line-height: 1.15; margin-bottom: 1.25rem; letter-spacing: -0.02em; }
+    .hero h1 .highlight { color: var(--blue); }
+    .hero p { font-size: 1.2rem; color: var(--gray); max-width: 540px; margin: 0 auto 2.5rem; }
+
+    /* ANIMATION */
+    .demo-box { background: var(--dark); border-radius: var(--radius); padding: 1.5rem 2rem; max-width: 560px; margin: 0 auto 3rem; text-align: left; position: relative; overflow: hidden; }
+    .demo-label { font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.08em; }
+    .demo-text { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 1.3rem; min-height: 2rem; }
+    .demo-text.hebrew { color: #f87171; direction: rtl; }
+    .demo-text.latin { color: #4ade80; }
+    .demo-arrow { text-align: center; padding: 0.75rem 0; color: #94a3b8; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+    .shortcut-badge { display: inline-flex; gap: 0.25rem; align-items: center; }
+    .key { background: #1e293b; border: 1px solid #334155; border-radius: 4px; padding: 0.15rem 0.45rem; font-size: 0.75rem; color: #cbd5e1; font-family: monospace; }
+    .cursor { display: inline-block; width: 2px; height: 1.2em; background: #60a5fa; animation: blink 1s infinite; vertical-align: middle; margin-left: 1px; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* INSTALL */
+    .install-section { background: var(--light); padding: 3rem 2rem; }
+    .install-inner { max-width: 700px; margin: 0 auto; text-align: center; }
+    .install-inner h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.75rem; }
+    .install-inner p { color: var(--gray); margin-bottom: 1.5rem; }
+    .steps { display: flex; flex-direction: column; gap: 1rem; text-align: left; margin-bottom: 2rem; }
+    .step { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; display: flex; gap: 1rem; align-items: flex-start; }
+    .step-num { background: var(--blue); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
+    .step-content h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.35rem; }
+    .step-content p { font-size: 0.9rem; color: var(--gray); }
+    .code-block { background: var(--dark); border-radius: var(--radius); padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .code-block code { color: #4ade80; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.8rem; word-break: break-all; }
+    .copy-btn { background: #1e293b; border: 1px solid #334155; color: #94a3b8; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.8rem; white-space: nowrap; transition: all 0.2s; flex-shrink: 0; }
+    .copy-btn:hover { background: #334155; color: white; }
+    .download-btn { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--blue); color: white; padding: 0.85rem 2rem; border-radius: var(--radius); font-weight: 600; font-size: 1rem; text-decoration: none; transition: all 0.2s; margin-top: 1rem; }
+    .download-btn:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(37,99,235,0.3); }
+
+    /* HOW IT WORKS */
+    .how-section { padding: 4rem 2rem; max-width: 900px; margin: 0 auto; }
+    .how-section h2 { text-align: center; font-size: 1.75rem; font-weight: 700; margin-bottom: 2.5rem; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; }
+    .card { border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; }
+    .card-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+    .card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .card p { font-size: 0.9rem; color: var(--gray); }
+
+    /* FAQ */
+    .faq-section { background: var(--light); padding: 4rem 2rem; }
+    .faq-inner { max-width: 700px; margin: 0 auto; }
+    .faq-inner h2 { text-align: center; font-size: 1.75rem; font-weight: 700; margin-bottom: 2rem; }
+    .faq-item { background: white; border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 0.75rem; overflow: hidden; }
+    .faq-q { padding: 1.1rem 1.5rem; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; }
+    .faq-q:hover { background: var(--light); }
+    .faq-chevron { transition: transform 0.2s; color: var(--gray); }
+    .faq-a { padding: 0 1.5rem; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s; color: var(--gray); font-size: 0.95rem; }
+    .faq-item.open .faq-a { max-height: 300px; padding: 0 1.5rem 1.1rem; }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); }
+
+    /* FOOTER */
+    footer { text-align: center; padding: 2rem; color: var(--gray); font-size: 0.9rem; border-top: 1px solid var(--border); }
+    footer a { color: var(--blue); text-decoration: none; }
+
+    /* RTL support */
+    [dir="rtl"] .demo-text.latin { direction: ltr; text-align: left; }
+    [dir="rtl"] .step { flex-direction: row; }
+
+    /* Hebrew overrides */
+    body.he { direction: rtl; }
+    body.he .code-block { direction: ltr; }
+    body.he .demo-box { direction: ltr; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><span>⌨️</span> Hebrew Fixer</div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">English</button>
+    <button class="lang-btn" onclick="setLang('he')">עברית</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <h1 data-en='Accidentally typed in <span class="highlight">Hebrew</span>? Fix it instantly.' data-he='הקלדת בטעות <span class="highlight">עברית</span>? תקן בשנייה.'>
+    Accidentally typed in <span class="highlight">Hebrew</span>? Fix it instantly.
+  </h1>
+  <p data-en="One keyboard shortcut converts your mistyped text - in both directions. Works in any app, 100% offline." data-he="קיצור מקלדת אחד ממיר את הטקסט שגוי - בשני הכיוונים. עובד בכל אפליקציה, 100% אופלייין.">
+    One keyboard shortcut converts your mistyped text - in both directions. Works in any app, 100% offline.
+  </p>
+
+  <!-- Animation -->
+  <div class="demo-box">
+    <div class="demo-label" data-en="You typed (Hebrew layout active by mistake)" data-he="מה שהקלדת (פריסת עברית הייתה פעילה בטעות)">You typed</div>
+    <div class="demo-text hebrew" id="demo-input">בםצפואקר</div>
+    <div class="demo-arrow">
+      <span data-en="press" data-he="לחץ">press</span>
+      <span class="shortcut-badge">
+        <span class="key">⌃</span><span class="key">⇧</span><span class="key">H</span>
+      </span>
+    </div>
+    <div class="demo-label" data-en="What you meant" data-he="מה שרצית להגיד">What you meant</div>
+    <div class="demo-text latin" id="demo-output">computer<span class="cursor"></span></div>
+  </div>
+</section>
+
+<!-- INSTALL -->
+<section class="install-section">
+  <div class="install-inner">
+    <h2 data-en="Install in 3 steps" data-he="התקנה ב-3 שלבים">Install in 3 steps</h2>
+    <p data-en="No account. No subscription. Free forever." data-he="ללא חשבון. ללא מנוי. חינם לנצח.">No account. No subscription. Free forever.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3 data-en="Open Terminal" data-he="פתח Terminal">Open Terminal</h3>
+          <p data-en="Press ⌘+Space, type 'Terminal', press Enter." data-he="לחץ ⌘+Space, הקלד 'Terminal', לחץ Enter.">Press ⌘+Space, type "Terminal", press Enter.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3 data-en="Run this one command" data-he="הרץ את הפקודה הזו">Run this one command</h3>
+          <p data-en="Copy and paste into Terminal, press Enter." data-he="העתק והדבק ל-Terminal, לחץ Enter.">Copy and paste into Terminal, press Enter.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3 data-en="Allow Accessibility access" data-he="אפשר גישה לנגישות">Allow Accessibility access</h3>
+          <p data-en="Mac will ask once - click Allow. This lets the tool type for you." data-he="Mac ישאל פעם אחת - לחץ אפשר. זה מאפשר לכלי להקליד עבורך.">Mac will ask once - click Allow. This lets the tool type for you.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <code id="install-cmd">brew install --cask hammerspoon && mkdir -p ~/.hammerspoon && curl -o ~/.hammerspoon/init.lua https://raw.githubusercontent.com/Rafaelstraus/hebrew-fixer/main/init.lua && open -a Hammerspoon</code>
+      <button class="copy-btn" onclick="copyInstall()" data-en="Copy" data-he="העתק">Copy</button>
+    </div>
+
+    <br>
+    <a class="download-btn" href="https://raw.githubusercontent.com/Rafaelstraus/hebrew-fixer/main/init.lua" download="init.lua">
+      ⬇️ <span data-en="Download script only" data-he="הורד רק את הסקריפט">Download script only</span>
+    </a>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <h2 data-en="How it works" data-he="איך זה עובד">How it works</h2>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">🔍</div>
+      <h3 data-en="Auto-detects direction" data-he="מזהה כיוון אוטומטית">Auto-detects direction</h3>
+      <p data-en="Hebrew characters → converts to Latin. Latin characters → converts to Hebrew. Same shortcut, always works." data-he="תווים עבריים ← ממיר ללטינית. תווים לטיניים ← ממיר לעברית. אותו קיצור, תמיד עובד.">Hebrew characters → converts to Latin. Latin characters → converts to Hebrew. Same shortcut, always works.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">⚡</div>
+      <h3 data-en="Works in any app" data-he="עובד בכל אפליקציה">Works in any app</h3>
+      <p data-en="Browser, Word, Slack, Notes, WhatsApp - select text anywhere, press the shortcut." data-he="דפדפן, Word, Slack, Notes, WhatsApp - סמן טקסט בכל מקום, לחץ את הקיצור.">Browser, Word, Slack, Notes, WhatsApp - select text anywhere, press the shortcut.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔐</div>
+      <h3 data-en="100% local" data-he="100% מקומי">100% local</h3>
+      <p data-en="No internet connection. No servers. Your text never leaves your Mac." data-he="אין חיבור לאינטרנט. אין שרתים. הטקסט שלך לעולם לא יוצא מה-Mac.">No internet connection. No servers. Your text never leaves your Mac.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🆓</div>
+      <h3 data-en="Free & open source" data-he="חינמי וקוד פתוח">Free & open source</h3>
+      <p data-en="The full code is on GitHub. 50 lines of Lua. Read every line before you run it." data-he="כל הקוד נמצא ב-GitHub. 50 שורות Lua. קרא כל שורה לפני שמריץ.">The full code is on GitHub. 50 lines of Lua. Read every line before you run it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="faq-inner">
+    <h2 data-en="Frequently asked questions" data-he="שאלות נפוצות">Frequently asked questions</h2>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        <span data-en="Is it safe? Can it read everything I type?" data-he="זה בטוח? האם זה יכול לקרוא כל מה שאני מקליד?">Is it safe? Can it read everything I type?</span>
+        <span class="faq-chevron">▾</span>
+      </div>
+      <div class="faq-a" data-en="No. The tool only activates when you press Ctrl+Shift+H. It does not monitor your keyboard at all. It reads only the text you explicitly selected at that moment - nothing else." data-he="לא. הכלי מופעל רק כאשר לוחצים Ctrl+Shift+H. הוא לא מנטר את המקלדת בכלל. הוא קורא רק את הטקסט שבחרת באותו רגע - שום דבר אחר.">No. The tool only activates when you press Ctrl+Shift+H. It does not monitor your keyboard at all.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        <span data-en="Does it send my text to the internet?" data-he="האם הוא שולח את הטקסט שלי לאינטרנט?">Does it send my text to the internet?</span>
+        <span class="faq-chevron">▾</span>
+      </div>
+      <div class="faq-a" data-en="Never. The conversion is a simple character lookup table - ק→e, ש→a, etc. It runs entirely on your Mac. There are zero network calls in the code." data-he="לעולם לא. ההמרה היא טבלת חיפוש פשוטה של תווים - ק→e, ש→a, וכו'. הכל רץ על ה-Mac שלך. אין שיחות רשת בקוד.">Never. The conversion is a simple character lookup table. It runs entirely on your Mac. Zero network calls.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        <span data-en="Why does it need Accessibility permission?" data-he="למה זה צריך הרשאת נגישות?">Why does it need Accessibility permission?</span>
+        <span class="faq-chevron">▾</span>
+      </div>
+      <div class="faq-a" data-en="macOS requires this permission for any tool that simulates keystrokes (Cmd+C to copy, Cmd+V to paste). Without it, no external script can type into other apps - this is a Mac security feature, not something we bypass." data-he="macOS מחייב הרשאה זו לכל כלי שמדמה הקשות מקשים (Cmd+C להעתקה, Cmd+V להדבקה). בלעדיה, אף סקריפט חיצוני לא יכול להקליד לאפליקציות אחרות - זה מאפיין אבטחה של Mac.">macOS requires this for any tool that simulates keystrokes (Cmd+C, Cmd+V). It's a Mac security feature.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        <span data-en="What is Hammerspoon?" data-he="מה זה Hammerspoon?">What is Hammerspoon?</span>
+        <span class="faq-chevron">▾</span>
+      </div>
+      <div class="faq-a" data-en="Hammerspoon is a free, open-source Mac automation tool used by thousands of developers. It runs a small config file in the background. Our script is that config file - you can read all 50 lines on GitHub." data-he="Hammerspoon הוא כלי אוטומציה חינמי וקוד פתוח למק, בשימוש אלפי מפתחים. הוא מריץ קובץ קונפיגורציה קטן ברקע. הסקריפט שלנו הוא אותו קובץ - אתה יכול לקרוא את כל 50 השורות ב-GitHub.">Hammerspoon is a free open-source Mac automation tool. Our script is its config file - readable on GitHub.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        <span data-en="Does it work with German and English?" data-he="האם זה עובד עם גרמנית ואנגלית?">Does it work with German and English?</span>
+        <span class="faq-chevron">▾</span>
+      </div>
+      <div class="faq-a" data-en="Yes. The mapping is based on physical key positions, not language. Whether you typed German or English, the key positions are the same - so the conversion works for both." data-he="כן. המיפוי מבוסס על מיקומי מקשים פיזיים, לא שפה. בין אם הקלדת גרמנית או אנגלית, מיקומי המקשים זהים - אז ההמרה עובדת לשניהם.">Yes. The mapping is based on physical key positions, not language. Works for both German and English.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        <span data-en="How do I uninstall it?" data-he="איך להסיר את ההתקנה?">How do I uninstall it?</span>
+        <span class="faq-chevron">▾</span>
+      </div>
+      <div class="faq-a" data-en="Delete ~/.hammerspoon/init.lua and quit Hammerspoon from the menu bar. Or run: brew uninstall --cask hammerspoon" data-he="מחק את ~/.hammerspoon/init.lua וצא מ-Hammerspoon מסרגל התפריטים. או הרץ: brew uninstall --cask hammerspoon">Delete ~/.hammerspoon/init.lua and quit Hammerspoon. Or: brew uninstall --cask hammerspoon</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>
+    <span data-en="Open source" data-he="קוד פתוח">Open source</span> ·
+    <a href="https://github.com/Rafaelstraus/hebrew-fixer" target="_blank">GitHub</a> ·
+    <span data-en="Made with ❤️ for anyone who switches keyboard layouts" data-he="נוצר עם ❤️ לכל מי שמחליף פריסות מקלדת">Made with ❤️ for anyone who switches keyboard layouts</span>
+  </p>
+</footer>
+
+<script>
+  // Language switching
+  function setLang(lang) {
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+    document.body.className = lang;
+    document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
+    document.querySelectorAll('[data-en]').forEach(el => {
+      el.innerHTML = el.getAttribute('data-' + lang) || el.getAttribute('data-en');
+    });
+  }
+
+  // FAQ toggle
+  function toggleFaq(el) {
+    el.parentElement.classList.toggle('open');
+  }
+
+  // Copy install command
+  function copyInstall() {
+    navigator.clipboard.writeText(document.getElementById('install-cmd').textContent.trim());
+    const btn = document.querySelector('.copy-btn');
+    const orig = btn.textContent;
+    btn.textContent = '✓';
+    setTimeout(() => btn.textContent = orig, 1500);
+  }
+
+  // Demo animation
+  const examples = [
+    { from: 'בםצפואקר', to: 'computer',  fromClass: 'hebrew', toClass: 'latin'  },
+    { from: 'njac',     to: 'מחשב',      fromClass: 'latin',  toClass: 'hebrew' },
+    { from: 'ןפיםמק',  to: 'iphone',    fromClass: 'hebrew', toClass: 'latin'  },
+    { from: 'vhkl',    to: 'הכל',       fromClass: 'latin',  toClass: 'hebrew' },
+    { from: 'נרשוביא', to: 'braucht',   fromClass: 'hebrew', toClass: 'latin'  },
+    { from: 'njald',   to: 'מילד',      fromClass: 'latin',  toClass: 'hebrew' },
+  ];
+
+  let idx = 0;
+  const inputEl  = document.getElementById('demo-input');
+  const outputEl = document.getElementById('demo-output');
+
+  function animateDemo() {
+    const ex = examples[idx % examples.length];
+    idx++;
+
+    inputEl.className  = 'demo-text ' + ex.fromClass;
+    outputEl.className = 'demo-text ' + ex.toClass;
+    inputEl.textContent = '';
+    outputEl.innerHTML  = '<span class="cursor"></span>';
+
+    const fromChars = [...ex.from];
+    const toChars   = [...ex.to];
+    let i = 0;
+
+    const typeFrom = setInterval(() => {
+      inputEl.textContent = fromChars.slice(0, i + 1).join('');
+      i++;
+      if (i >= fromChars.length) {
+        clearInterval(typeFrom);
+        setTimeout(() => {
+          let k = 0;
+          outputEl.innerHTML = '';
+          const typeTo = setInterval(() => {
+            outputEl.innerHTML = toChars.slice(0, k + 1).join('') + '<span class="cursor"></span>';
+            k++;
+            if (k >= toChars.length) {
+              clearInterval(typeTo);
+              setTimeout(animateDemo, 2200);
+            }
+          }, 80);
+        }, 700);
+      }
+    }, 80);
+  }
+
+  setTimeout(animateDemo, 600);
+</script>
+</body>
+</html>
