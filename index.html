@@ -23,6 +23,12 @@
     nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); z-index: 100; }
     .logo { font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem; }
     .logo span { font-size: 1.4rem; }
+    .nav-icon { width: 64px; height: 64px; }
+    .nav-text { font-size: 1.25rem; letter-spacing: -0.01em; margin-left: 4px; }
+    @media (max-width: 480px) {
+      .nav-icon { width: 44px; height: 44px; }
+      .nav-text { font-size: 1rem; margin-left: 2px; }
+    }
     .lang-toggle { display: flex; gap: 0.5rem; }
     .lang-btn { padding: 0.3rem 0.8rem; border-radius: 20px; border: 1px solid var(--border); background: white; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; }
     .lang-btn.active { background: var(--blue); color: white; border-color: var(--blue); }
@@ -101,8 +107,8 @@
 
 <nav>
   <div class="logo">
-    <img src="https://raw.githubusercontent.com/Rafaelstraus/hebrew-fixer/main/logo-icon.png" width="56" height="56" style="display:block;" />
-    <span style="font-size:1.2rem;letter-spacing:-0.01em;margin-left:6px;"><span style="font-weight:300;color:#0f172a;">Hebrew</span> <span style="font-weight:800;color:#4720CE;">Fixer</span></span>
+    <img src="https://raw.githubusercontent.com/Rafaelstraus/hebrew-fixer/main/logo-icon.png" class="nav-icon" style="display:block;" />
+    <span class="nav-text"><span style="font-weight:300;color:#0f172a;">Hebrew</span> <span style="font-weight:800;color:#4720CE;">Fixer</span></span>
   </div>
   <div class="lang-toggle">
     <button class="lang-btn active" onclick="setLang('en')">English</button>
