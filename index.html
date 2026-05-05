@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hebrew Fixer - Fix Hebrew Keyboard Typos Instantly</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%234720CE'/%3E%3Crect x='18' y='16' width='64' height='68' rx='12' fill='%23e8e8f0'/%3E%3Crect x='22' y='20' width='56' height='56' rx='9' fill='white'/%3E%3Ctext x='50' y='68' font-size='42' text-anchor='middle' fill='%234720CE' font-family='Arial,sans-serif' font-weight='bold'%3E%D7%90%3C/text%3E%3Cline x1='74' y1='10' x2='80' y2='4' stroke='%234720CE' stroke-width='3' stroke-linecap='round'/%3E%3Cline x1='82' y1='18' x2='90' y2='16' stroke='%234720CE' stroke-width='3' stroke-linecap='round'/%3E%3Cline x1='78' y1='6' x2='84' y2='14' stroke='%234720CE' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E" />
   <meta name="description" content="Accidentally typed in Hebrew when you meant English or German? Fix it instantly with one keyboard shortcut. Free, local, open source." />
   <style>
     :root {
@@ -100,7 +100,18 @@
 <body>
 
 <nav>
-  <div class="logo"><span>⌨️</span> Hebrew Fixer</div>
+  <div class="logo">
+    <svg width="36" height="36" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" rx="22" fill="#4720CE"/>
+      <rect x="18" y="16" width="64" height="68" rx="12" fill="#e8e8f0"/>
+      <rect x="22" y="20" width="56" height="56" rx="9" fill="white"/>
+      <text x="50" y="68" font-size="42" text-anchor="middle" fill="#4720CE" font-family="Arial,sans-serif" font-weight="bold">א</text>
+      <line x1="74" y1="10" x2="80" y2="4" stroke="#4720CE" stroke-width="3" stroke-linecap="round"/>
+      <line x1="82" y1="18" x2="90" y2="16" stroke="#4720CE" stroke-width="3" stroke-linecap="round"/>
+      <line x1="78" y1="6" x2="84" y2="14" stroke="#4720CE" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    Hebrew <span style="color:#4720CE;font-weight:800;">Fixer</span>
+  </div>
   <div class="lang-toggle">
     <button class="lang-btn active" onclick="setLang('en')">English</button>
     <button class="lang-btn" onclick="setLang('he')">עברית</button>
